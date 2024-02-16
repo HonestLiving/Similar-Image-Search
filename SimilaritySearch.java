@@ -1,3 +1,5 @@
 public class SimilaritySearch {
-    //OMG OMGOGMOOMGOMGGOGMOGOGMGM YAYAYAYAAYYAYAYAA
+    public static void main(String args[]) {
+        
+    }
 }
