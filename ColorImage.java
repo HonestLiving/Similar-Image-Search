@@ -92,5 +92,6 @@ public class ColorImage {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }
