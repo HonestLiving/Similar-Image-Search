@@ -17,11 +17,6 @@ public class ColorImage {
     private void readPPM(String filename) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filename));
 
-        //PPM header
-        String magicNumber = br.readLine().trim();
-        if (!magicNumber.equals("P3")) {
-            throw new IOException("Invalid PPM file format");
-        }
 
         //reading width, height, and depth
         String[] dimensions = br.readLine().trim().split("\\s+");
