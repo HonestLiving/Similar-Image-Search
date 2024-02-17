@@ -13,7 +13,7 @@ public class ColorImage {
         BufferedImage image = ImageIO.read(new File(filename));
         this.width = image.getWidth();
         this.height = image.getHeight();
-        this.depth = 24;
+        this.depth = 8;
 
         this.pixels = new int[width][height][3];
 
@@ -65,8 +65,9 @@ public class ColorImage {
             System.out.println("Depth: " + image.getDepth());
             int[] pixel = image.getPixel(5, 5);
             System.out.println("Pixel at (0, 0): R=" + pixel[0] + ", G=" + pixel[1] + ", B=" + pixel[2]);
-            image.reduceColor(4);
+            image.reduceColor(3);
             System.out.println("New depth after reducing color space: " + image.getDepth());
+            System.out.println("Pixel at (0, 0): R=" + pixel[0] + ", G=" + pixel[1] + ", B=" + pixel[2]);
         } catch (IOException e) {
             e.printStackTrace();
         }
