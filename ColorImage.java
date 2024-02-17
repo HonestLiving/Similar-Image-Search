@@ -1,51 +1,39 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class ColorImage {
     private int width;
     private int height;
-    private int depth; // $ of bits per pixel
-    private int[][][] pixels; //3D array to store RGB values
+    private int depth; // Number of bits per pixel
+    private int[][][] pixels; // 3D array to store RGB values
 
-    //constructor create an image from a PPM file
+    // Constructor to create an image from a file
     public ColorImage(String filename) throws IOException {
-        readPPM(filename);
-    }
+        BufferedImage image = ImageIO.read(new File(filename));
+        this.width = image.getWidth();
+        this.height = image.getHeight();
+        this.depth = 24; // Assuming 24 bits per pixel (8 bits per channel)
 
-    //Read ppm
-    private void readPPM(String filename) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(filename));
-
-        //PPM header
-        String magicNumber = br.readLine().trim();
-        if (!magicNumber.equals("P3")) {
-            throw new IOException("Invalid PPM file format");
-        }
-
-        //reading width, height, and depth
-        String[] dimensions = br.readLine().trim().split("\\s+");
-        this.width = Integer.parseInt(dimensions[0]);
-        this.height = Integer.parseInt(dimensions[1]);
-        this.depth = Integer.parseInt(br.readLine().trim());
-
-        //pixels array
+        // Initialize pixels array
         this.pixels = new int[width][height][3];
 
-        //read pixel data
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
-                String[] rgb = br.readLine().trim().split("\\s+");
-                pixels[i][j][0] = Integer.parseInt(rgb[0]);
-                pixels[i][j][1] = Integer.parseInt(rgb[1]);
-                pixels[i][j][2] = Integer.parseInt(rgb[2]);
+        // Populate pixels array with RGB values from BufferedImage
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int rgb = image.getRGB(i, j);
+                // Extract red, green, and blue components
+                int red = (rgb >> 16) & 0xFF;
+                int green = (rgb >> 8) & 0xFF;
+                int blue = rgb & 0xFF;
+                // Store RGB values in the pixels array
+                pixels[i][j] = new int[] {red, green, blue};
             }
         }
-
-        br.close();
     }
 
-    // Getter
+    // Getter methods
     public int getWidth() {
         return width;
     }
@@ -58,30 +46,31 @@ public class ColorImage {
         return depth;
     }
 
-    // get RGB value of a pixel at position (i, j)
+    // Method to get RGB value of a pixel at position (i, j)
     public int[] getPixel(int i, int j) {
         return pixels[i][j];
     }
 
-    //reduce color space to d-bit representation
+    // Method to reduce color space to d-bit representation
     public void reduceColor(int d) {
-        //assuming d-bit representation means reducing each channel's value to d bits
+        // Assuming d-bit representation means reducing each channel's value to d bits
         int maxVal = (int) Math.pow(2, d) - 1;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int[] rgb = pixels[i][j];
                 for (int k = 0; k < 3; k++) {
-                    rgb[k] = (rgb[k] * maxVal) / 255; //scale RGB value to d bits
+                    rgb[k] = (rgb[k] * maxVal) / 255; // Scale RGB value to d bits
                 }
             }
         }
-        //update depth to new depth
+        // Update depth to reflect new bit depth
         depth = d;
     }
 
     public static void main(String[] args) {
         try {
             ColorImage image = new ColorImage("example.jpg");
+            // Example usage
             System.out.println("Width: " + image.getWidth());
             System.out.println("Height: " + image.getHeight());
             System.out.println("Depth: " + image.getDepth());
@@ -92,6 +81,5 @@ public class ColorImage {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
