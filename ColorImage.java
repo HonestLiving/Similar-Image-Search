@@ -16,7 +16,6 @@ public class ColorImage {
         this.height = image.getHeight();
         this.depth = 24; // Assuming 24 bits per pixel (8 bits per channel)
 
-        // Initialize pixels array
         this.pixels = new int[width][height][3];
 
         // Populate pixels array with RGB values from BufferedImage
