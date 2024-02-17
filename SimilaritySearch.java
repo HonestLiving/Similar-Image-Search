@@ -23,7 +23,8 @@ public class SimilaritySearch {
         //get the filename and directory path from cmd
         String fileName = args[0];
         String folderName = args[1];    
-        ArrayList<Double> intersections = new ArrayList<Double>();
+        ArrayList<String> intersections = new ArrayList<String>();
+        ArrayList<Double> intersectionsValue = new ArrayList<Double>();
 
         ColorImage img;
         try {
@@ -40,16 +41,24 @@ public class SimilaritySearch {
             for (File file : allFiles) {
                 if (file.isFile() && file.getName().toLowerCase().endsWith(".txt")) {
                     ColorHistogram datasetImg = new ColorHistogram(file.getName());
-                    intersections.add(queryImg.compare(datasetImg));
+                    intersections.add(file.getName() + " " + queryImg.compare(datasetImg));
+                    intersectionsValue.add(queryImg.compare(datasetImg));
                 }
             }            
-            Collections.sort(intersections);
-            Collections.reverse(intersections);
+            Collections.sort(intersectionsValue);
+            Collections.reverse(intersectionsValue);
 
             for (int i = 0; i < 5; i++) {
-                System.out.println(i + ". " + "filename: " + intersections.get(i));
+                for (String element : intersections) {
+                    String[] parts = element.split(" "); //split the element based on a space
+                    String name = parts[0]; //extract file name
+                    double intersectionValue = Double.parseDouble(parts[1]); //extract double
+                    if (intersectionsValue.get(i) == intersectionValue) {
+                        System.out.println(i + ". " + name + ": " + intersectionsValue.get(i));
+                        break;
+                    }
+                }
             }
-            
 
         } catch (IOException e) {
             e.printStackTrace();
