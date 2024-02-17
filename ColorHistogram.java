@@ -1,32 +1,61 @@
+/**
+   ColorHistogram.java
+   ---------------------------------------
+   Programmers: Kevin Yao (300295024), Matthew Chen (300288244)
+   Course: CSI2120
+   ---------------------------------------
+   This class creates and reads a histogram of color values in an image. 
+   It can create a histogram for a ColorImage object, calculate and retrieve the normalized histogram, 
+   compare histograms with other instances, and saving histograms to files, and read histograms from
+   .txt files.
+*/ 
+
 import java.io.*;
-import java.util.Arrays;
 
 public class ColorHistogram {
     private int[] histogram;
     private int depth;
-    private int[][][] pixels;
+    private int numOfColors;
 
     public ColorHistogram(int d) {
         this.depth = d;
-        int size = (int) Math.pow(2, d);
+        int size = (int) Math.pow(2, d*3);
         this.histogram = new int[size];
     }
 
     public ColorHistogram(String filename) throws IOException {
-        loadHistogram(filename);
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+
+        String line;
+        int index = 0;
+        line = reader.readLine();
+        numOfColors = Integer.parseInt(line);
+        this.histogram = new int[numOfColors];
+        while (index < histogram.length) {
+            line = reader.readLine();
+            if (line != null) {
+                histogram[index] = Integer.parseInt(line);
+                index++;
+            } else {
+                break;
+            }
+        }
+
+        reader.close();
     }
 
-    public void setImage(int[][][] pixels) {
-        this.pixels = pixels;
-        int width = pixels.length;
-        int height = pixels[0].length;
-
-        Arrays.fill(histogram, 0); //reset histogram
-
+    public void setImage(ColorImage image) {
+        //reduce pixel values and count occurrences
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int depth = image.getDepth();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                int[] pixel = pixels[i][j];
-                int index = toIndex(pixel, depth);
+                int[] pixel = image.getPixel(i, j);
+                int red = pixel[0] >> (8 - depth);
+                int green = pixel[1] >> (8 - depth);
+                int blue = pixel[2] >> (8 - depth);
+                int index = (red << (2 * depth)) + (green << depth) + blue;
                 histogram[index]++;
             }
         }
@@ -63,26 +92,6 @@ public class ColorHistogram {
         }
 
         writer.close();
-    }
-
-    private void loadHistogram(String filename) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
-
-        String line;
-        int index = 0;
-        while ((line = reader.readLine()) != null && index < histogram.length) {
-            histogram[index++] = Integer.parseInt(line);
-        }
-
-        reader.close();
-    }
-
-    private int toIndex(int[] pixel, int d) {
-        int index = 0;
-        for (int i = 0; i < pixel.length; i++) {
-            index |= (pixel[i] >> (8 - d)) << (2 * (pixel.length - i - 1) * d);
-        }
-        return index;
     }
 
     private int getTotalPixels() {
