@@ -23,53 +23,58 @@ public class ColorHistogram {
         this.histogram = new int[size];
     }
 
+
     public ColorHistogram(String filename) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filename));
-
         String line;
         int index = 0;
         line = reader.readLine();
-        numOfColors = Integer.parseInt(line);
+        numOfColors = Integer.parseInt(line); //know that line 1 tells total num of colors
         this.histogram = new int[numOfColors];
+
+        //adds each color to histogram 1 by 1 through string manipulation
         while (index < histogram.length) {
             line = reader.readLine();
             if (line != null) {
-                histogram[index] = Integer.parseInt(line);
-                index++;
+                String[] numbers = line.split(" ");
+                for (String number : numbers) {
+                    histogram[index] = Integer.parseInt(number);
+                    index++;
+                }
             } else {
                 break;
             }
         }
-
+    
         reader.close();
     }
 
     public void setImage(ColorImage image) {
-        //reduce pixel values and count occurrences
         int width = image.getWidth();
         int height = image.getHeight();
         int depth = image.getDepth();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
+                //all reduced already
                 int[] pixel = image.getPixel(i, j);
-                int red = pixel[0] >> (8 - depth);
-                int green = pixel[1] >> (8 - depth);
-                int blue = pixel[2] >> (8 - depth);
-                int index = (red << (2 * depth)) + (green << depth) + blue;
-                histogram[index]++;
+                int red = pixel[0];  
+                int green = pixel[1];
+                int blue = pixel[2];
+                int index = (red << (2 * depth)) + (green << depth) + blue; //given formula
+                histogram[index] += 1;
             }
         }
     }
 
     public double[] getHistogram() {
-        double[] normalizedHistogram = new double[histogram.length];
+        double[] normalizedHist = new double[histogram.length];
         int totalPixels = getTotalPixels();
 
         for (int i = 0; i < histogram.length; i++) {
-            normalizedHistogram[i] = (double) histogram[i] / totalPixels;
+            normalizedHist[i] = (double) histogram[i] / totalPixels; //given formula
         }
 
-        return normalizedHistogram;
+        return normalizedHist;
     }
 
     public double compare(ColorHistogram hist) {
@@ -78,7 +83,7 @@ public class ColorHistogram {
         double intersection = 0.0;
 
         for (int i = 0; i < hist1.length; i++) {
-            intersection += Math.min(hist1[i], hist2[i]);
+            intersection += Math.min(hist1[i], hist2[i]); //given formula
         }
 
         return intersection;

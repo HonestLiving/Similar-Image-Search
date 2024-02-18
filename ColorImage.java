@@ -2,7 +2,7 @@
    ColorImage.java
    ---------------------------------------
    Programmers: Kevin Yao (300295024), Matthew Chen (300288244)
-   Course:  CSI2120
+   Course: CSI2120
    ---------------------------------------
    This class Constructs a ColorImage object from a specified image file. 
    The image file must be in jpg format.
@@ -22,17 +22,17 @@ public class ColorImage {
     //reads jpg
     public ColorImage(String filename) throws IOException {
         File currentFolder = new File(System.getProperty("user.dir")); //get current directory
-        File queryImages = new File(currentFolder, "queryImages"); 
+        File queryImages = new File(currentFolder, "queryImages");  //known directory name
         File imageFile = new File(queryImages, filename);
 
-        // Read the image file
         BufferedImage image = ImageIO.read(imageFile);
         this.width = image.getWidth();
         this.height = image.getHeight();
-        this.depth = 8;
+        this.depth = 8; //given
 
         this.pixels = new int[width][height][3];
 
+        //processes the BufferedImage
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int rgb = image.getRGB(i, j);
@@ -61,31 +61,14 @@ public class ColorImage {
     }
 
     public void reduceColor(int d) {
-        int maxVal = (int) Math.pow(2, d) - 1;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int[] rgb = pixels[i][j];
                 for (int k = 0; k < 3; k++) {
-                    rgb[k] = (rgb[k] * maxVal) / 255;
+                    rgb[k] = rgb[k] >> (8 - d); //given bitshift formula in instructions
                 }
             }
         }
         depth = d;
     }
-
-    // public static void main(String[] args) {
-    //     try {
-    //         ColorImage image = new ColorImage("example.jpg");
-    //         System.out.println("Width: " + image.getWidth());
-    //         System.out.println("Height: " + image.getHeight());
-    //         System.out.println("Depth: " + image.getDepth());
-    //         int[] pixel = image.getPixel(5, 5);
-    //         System.out.println("Pixel at (0, 0): R=" + pixel[0] + ", G=" + pixel[1] + ", B=" + pixel[2]);
-    //         image.reduceColor(3);
-    //         System.out.println("New depth after reducing color space: " + image.getDepth());
-    //         System.out.println("Pixel at (0, 0): R=" + pixel[0] + ", G=" + pixel[1] + ", B=" + pixel[2]);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
 }

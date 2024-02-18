@@ -19,14 +19,14 @@ public class SimilaritySearch {
             System.out.println("Please enter: java SimilaritySearch <fileName> <folderName>");
             return;
         }
-        
+        ArrayList<String> intersections = new ArrayList<String>();
+        ArrayList<Double> intersectionsValue = new ArrayList<Double>();
+        ColorImage img;
+
         //get the filename and directory path from cmd
         String fileName = args[0];
         String folderName = args[1];    
-        ArrayList<String> intersections = new ArrayList<String>();
-        ArrayList<Double> intersectionsValue = new ArrayList<Double>();
 
-        ColorImage img;
         try {
             img = new ColorImage(fileName);
             img.reduceColor(3);
@@ -35,16 +35,18 @@ public class SimilaritySearch {
             queryImg.getHistogram();
             queryImg.save(fileName + " histogram");
 
-            File currentFolder = new File(System.getProperty("user.dir")); // Get current directory
+            File currentFolder = new File(System.getProperty("user.dir"));
             File dataset = new File(currentFolder, folderName);
-            File[] allFiles = dataset.listFiles(); // List all files in the directory
+            File[] allFiles = dataset.listFiles(); //list all files in directory
+
             for (File file : allFiles) {
                 if (file.isFile() && file.getName().toLowerCase().endsWith(".txt")) {
-                    ColorHistogram datasetImg = new ColorHistogram(file.getName());
+                    ColorHistogram datasetImg = new ColorHistogram(file.getAbsolutePath());
                     intersections.add(file.getName() + " " + queryImg.compare(datasetImg));
                     intersectionsValue.add(queryImg.compare(datasetImg));
                 }
             }            
+
             Collections.sort(intersectionsValue);
             Collections.reverse(intersectionsValue);
 
@@ -52,9 +54,9 @@ public class SimilaritySearch {
                 for (String element : intersections) {
                     String[] parts = element.split(" "); //split the element based on a space
                     String name = parts[0]; //extract file name
-                    double intersectionValue = Double.parseDouble(parts[1]); //extract double
+                    double intersectionValue = Double.parseDouble(parts[1]); //extract intersection value
                     if (intersectionsValue.get(i) == intersectionValue) {
-                        System.out.println(i + ". " + name + ": " + intersectionsValue.get(i));
+                        System.out.println(i+1 + ". " + name + ": " + intersectionsValue.get(i) + " resemblance"); //output message
                         break;
                     }
                 }
@@ -65,6 +67,4 @@ public class SimilaritySearch {
         }
         
     }
-
-
 }
