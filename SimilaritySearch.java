@@ -19,14 +19,14 @@ public class SimilaritySearch {
             System.out.println("Please enter: java SimilaritySearch <fileName> <folderName>");
             return;
         }
-        ArrayList<String> intersections = new ArrayList<String>();
-        ArrayList<Double> intersectionsValue = new ArrayList<Double>();
-        ColorImage img;
-
+        
         //get the filename and directory path from cmd
         String fileName = args[0];
         String folderName = args[1];    
-
+        ArrayList<String> intersections = new ArrayList<String>();
+        ArrayList<Double> intersectionsValue = new ArrayList<Double>();
+        ColorImage img;
+        
         try {
             img = new ColorImage(fileName);
             img.reduceColor(3);
@@ -35,10 +35,9 @@ public class SimilaritySearch {
             queryImg.getHistogram();
             queryImg.save(fileName + " histogram");
 
-            File currentFolder = new File(System.getProperty("user.dir"));
+            File currentFolder = new File(System.getProperty("user.dir")); //get current directory
             File dataset = new File(currentFolder, folderName);
             File[] allFiles = dataset.listFiles(); //list all files in directory
-
             for (File file : allFiles) {
                 if (file.isFile() && file.getName().toLowerCase().endsWith(".txt")) {
                     ColorHistogram datasetImg = new ColorHistogram(file.getAbsolutePath());
@@ -46,7 +45,6 @@ public class SimilaritySearch {
                     intersectionsValue.add(queryImg.compare(datasetImg));
                 }
             }            
-
             Collections.sort(intersectionsValue);
             Collections.reverse(intersectionsValue);
 
@@ -54,9 +52,9 @@ public class SimilaritySearch {
                 for (String element : intersections) {
                     String[] parts = element.split(" "); //split the element based on a space
                     String name = parts[0]; //extract file name
-                    double intersectionValue = Double.parseDouble(parts[1]); //extract intersection value
+                    double intersectionValue = Double.parseDouble(parts[1]); //extract double
                     if (intersectionsValue.get(i) == intersectionValue) {
-                        System.out.println(i+1 + ". " + name + ": " + intersectionsValue.get(i) + " resemblance"); //output message
+                        System.out.println(i+1 + ". " + name + ": " + intersectionsValue.get(i) + " resemblence");
                         break;
                     }
                 }

@@ -19,10 +19,9 @@ public class ColorHistogram {
 
     public ColorHistogram(int d) {
         this.depth = d;
-        int size = (int) Math.pow(2, d*3);
+        int size = (int) Math.pow(2, d*3); //given formula
         this.histogram = new int[size];
     }
-
 
     public ColorHistogram(String filename) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filename));
@@ -32,7 +31,7 @@ public class ColorHistogram {
         numOfColors = Integer.parseInt(line); //know that line 1 tells total num of colors
         this.histogram = new int[numOfColors];
 
-        //adds each color to histogram 1 by 1 through string manipulation
+        //adds each color to histogram from .txt file
         while (index < histogram.length) {
             line = reader.readLine();
             if (line != null) {
@@ -55,26 +54,25 @@ public class ColorHistogram {
         int depth = image.getDepth();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                //all reduced already
                 int[] pixel = image.getPixel(i, j);
                 int red = pixel[0];  
                 int green = pixel[1];
                 int blue = pixel[2];
                 int index = (red << (2 * depth)) + (green << depth) + blue; //given formula
-                histogram[index] += 1;
+                histogram[index]++;
             }
         }
     }
 
     public double[] getHistogram() {
-        double[] normalizedHist = new double[histogram.length];
+        double[] normalizedHistogram = new double[histogram.length];
         int totalPixels = getTotalPixels();
 
         for (int i = 0; i < histogram.length; i++) {
-            normalizedHist[i] = (double) histogram[i] / totalPixels; //given formula
+            normalizedHistogram[i] = (double) histogram[i] / totalPixels; //given formula
         }
 
-        return normalizedHist;
+        return normalizedHistogram;
     }
 
     public double compare(ColorHistogram hist) {

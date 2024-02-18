@@ -2,7 +2,7 @@
    ColorImage.java
    ---------------------------------------
    Programmers: Kevin Yao (300295024), Matthew Chen (300288244)
-   Course: CSI2120
+   Course:  CSI2120
    ---------------------------------------
    This class Constructs a ColorImage object from a specified image file. 
    The image file must be in jpg format.
@@ -22,7 +22,7 @@ public class ColorImage {
     //reads jpg
     public ColorImage(String filename) throws IOException {
         File currentFolder = new File(System.getProperty("user.dir")); //get current directory
-        File queryImages = new File(currentFolder, "queryImages");  //known directory name
+        File queryImages = new File(currentFolder, "queryImages");  //known directory
         File imageFile = new File(queryImages, filename);
 
         BufferedImage image = ImageIO.read(imageFile);
@@ -32,7 +32,7 @@ public class ColorImage {
 
         this.pixels = new int[width][height][3];
 
-        //processes the BufferedImage
+        //gets rgb values from jpg
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int rgb = image.getRGB(i, j);
@@ -65,7 +65,7 @@ public class ColorImage {
             for (int j = 0; j < height; j++) {
                 int[] rgb = pixels[i][j];
                 for (int k = 0; k < 3; k++) {
-                    rgb[k] = rgb[k] >> (8 - d); //given bitshift formula in instructions
+                    rgb[k] = rgb[k] >> (8 - d); //given formula
                 }
             }
         }
